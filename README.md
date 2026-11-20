@@ -21,6 +21,16 @@ to `gpt-4o-mini` (override with `OPENAI_MODEL`) because LangChain's default `gpt
 `numpy<2` because faiss-cpu 1.8.0 can't import under numpy 2; a `pyproject.toml` for uv (Python 3.10, the
 `python_3_10` runtime in `openlayer.json`).
 
+### Development mode (GitHub-linked)
+
+The Openlayer project is linked to `riley-ol/rag-example` (branch `main`, root `./`). Every push runs
+`openlayer_run.py` on the golden set in Openlayer (`modelType: full`; the workspace `OPENAI_API_KEY` secret is
+injected) and posts an **Openlayer** check run on the commit or PR. Tests (`tests.json`):
+
+- Ensure all outputs are valid JSON
+- Maximum response latency of 5 seconds (per row, < 6000 ms)
+- Answers match the golden answers: `answerCorrectness >= 0.7` against `ground_truth` in `dataset.json`
+
 ---
 
 ## Original template README
