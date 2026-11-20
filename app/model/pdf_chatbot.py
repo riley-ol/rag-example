@@ -79,8 +79,9 @@ class PDFChatbotModel:
         # Split documents into chunks
         texts = self.text_splitter.split_documents(documents)
         
-        # Create vector store
-        self.vectorstore = FAISS.from_documents(texts, self.embeddings)
+        # Create the vector store once and reuse it: embedding every upload is our biggest cost
+        if self.vectorstore is None:
+            self.vectorstore = FAISS.from_documents(texts, self.embeddings)
         
         # Create retrieval chain
         prompt_template = """Use the following pieces of context to answer the question at the end. 
