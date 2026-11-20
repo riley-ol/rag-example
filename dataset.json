@@ -1,0 +1,22 @@
+[
+    {
+        "file_dir": "./data/cv_1.pdf",
+        "question": "What is the candidate's name and email address?"
+    },
+    {
+        "file_dir": "./data/cv_2.pdf",
+        "question": "What programming languages does this person know?"
+    },
+    {
+        "file_dir": "./data/cv_3.pdf",
+        "question": "What is the candidate's work experience?"
+    },
+    {
+        "file_dir": "./data/cv_4.pdf",
+        "question": "What are the candidate's key skills and qualifications?"
+    },
+    {
+        "file_dir": "./data/cv_5.pdf",
+        "question": "What is the candidate's educational background?"
+    }
+]

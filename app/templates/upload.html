@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Chatbot - Upload PDF</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='main.css') }}" />
+</head>
+<body>
+    <div class="header">
+        <img src="{{ url_for('static', path='icons.png') }}" alt="OpenAI + Openlayer Logo" />
+    </div>
+    <h2 style="text-align: center;">PDF Chatbot</h2>
+    <p style="text-align: center;">Upload a PDF document and ask questions about its content. The RAG chatbot (built with LangChain) will answer your questions using information from the document.</p>
+
+    <p style="text-align: center;">All model interactions are monitored by Openlayer. You can see the requests on the <a
+        href="https://app.openlayer.com/" target="_blank">Openlayer platform</a>.</p>
+
+    {% if error %}
+    <div style="color: red; text-align: center; margin: 20px;">
+        <strong>Error:</strong> {{ error }}
+    </div>
+    {% endif %}
+
+    <form id="upload-form" action="/upload-file" method="POST" enctype="multipart/form-data">
+        <div class="upload-area" id="uploadfile">
+            Drag & Drop PDF Here or Click to Upload
+        </div>
+        <input type="file" name="file" id="file" style="display: none;" accept="application/pdf">
+        <br>
+        <button type="submit" style="display: block; margin: 20px auto;">Upload PDF</button>
+    </form>
+
+    <form action="/upload-sample" method="POST" style="text-align: center;">
+        <label for="sample_pdf">Or use a sample PDF:</label>
+        <select name="sample_pdf" id="sample_pdf">
+            <option value="./data/cv_1.pdf">Sample Document 1</option>
+            <option value="./data/cv_2.pdf">Sample Document 2</option>
+            <option value="./data/cv_3.pdf">Sample Document 3</option>
+        </select>
+        <br><br>
+        <button type="submit">Use Sample PDF</button>
+    </form>
+
+    <div id="loading">
+        <p>Loading PDF and creating vector embeddings... Please wait.</p>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadfile');
+        const fileInput = document.getElementById('file');
+        const uploadForm = document.getElementById('upload-form');
+        const loading = document.getElementById('loading');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragging');
+        });
+
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragging'));
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragging');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                loading.style.display = 'block';
+                uploadForm.submit();
+            }
+        });
+
+        uploadForm.addEventListener('submit', () => {
+            loading.style.display = 'block';
+        });
+    </script>
+
+</body>
+</html>

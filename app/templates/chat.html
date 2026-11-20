@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Chatbot - Chat Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='main.css') }}" />
+    <style>
+        .chat-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        
+        .chat-history {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .user-message {
+            background-color: #e3f2fd;
+            text-align: right;
+        }
+        
+        .bot-message {
+            background-color: #f1f8e9;
+        }
+        
+        .sources {
+            background-color: #fff3e0;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .chat-input button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .chat-input button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .pdf-info {
+            background-color: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            font-style: italic;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="{{ url_for('static', path='icons.png') }}" alt="OpenAI + Openlayer Logo" />
+    </div>
+    
+    <h2 style="text-align: center;">PDF Chatbot</h2>
+    
+    <div class="chat-container">
+        <div class="pdf-info">
+            <strong>PDF Loaded:</strong> {{ filename }}<br>
+            <strong>Document processed into {{ chunk_count }} chunks</strong><br>
+            <em>You can now ask questions about the content of this PDF.</em>
+        </div>
+        
+        <div class="chat-history" id="chatHistory">
+            <div class="message bot-message">
+                <strong>Bot:</strong> Hi! I've processed your PDF. You can now ask me questions about its content. What would you like to know?
+            </div>
+        </div>
+        
+        <div class="loading" id="loading">
+            Thinking... Please wait.
+        </div>
+        
+        <div class="chat-input">
+            <input type="text" id="questionInput" placeholder="Ask a question about the PDF..." maxlength="500">
+            <button id="sendButton" onclick="sendQuestion()">Send</button>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="/" style="color: #007bff; text-decoration: none;">Upload Another PDF</a>
+    </div>
+
+    <script>
+        const chatHistory = document.getElementById('chatHistory');
+        const questionInput = document.getElementById('questionInput');
+        const sendButton = document.getElementById('sendButton');
+        const loading = document.getElementById('loading');
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.innerHTML = message;
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        async function sendQuestion() {
+            const question = questionInput.value.trim();
+            if (!question) return;
+
+            // Add user message to chat
+            addMessage(`<strong>You:</strong> ${question}`, true);
+            
+            // Clear input and disable send button
+            questionInput.value = '';
+            sendButton.disabled = true;
+            loading.style.display = 'block';
+
+            try {
+                // Send question to server
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: question })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Unknown error occurred');
+                }
+
+                let botMessage = `<strong>Bot:</strong> ${data.answer}`;
+                if (data.sources && data.sources.length > 0) {
+                    botMessage += '<div class="sources"><strong>Sources:</strong><br>';
+                    data.sources.forEach((source, index) => {
+                        botMessage += `<em>${index + 1}. ${source}</em><br>`;
+                    });
+                    botMessage += '</div>';
+                }
+                addMessage(botMessage);
+            } catch (error) {
+                addMessage(`<strong>Bot:</strong> Sorry, there was an error processing your question: ${error.message}`);
+            } finally {
+                sendButton.disabled = false;
+                loading.style.display = 'none';
+                questionInput.focus();
+            }
+        }
+
+        // Allow Enter key to send message
+        questionInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !sendButton.disabled) {
+                sendQuestion();
+            }
+        });
+
+        // Focus on input when page loads
+        questionInput.focus();
+    </script>
+
+</body>
+</html>
