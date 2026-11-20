@@ -11,7 +11,12 @@
     {
       "name": "golden_set",
       "path": "dataset.json",
-      "label": "validation"
+      "label": "validation",
+      "inputVariableNames": [
+        "file_dir",
+        "question"
+      ],
+      "groundTruthColumnName": "ground_truth"
     }
   ],
   "testsPath": "tests.json",

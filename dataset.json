@@ -1,22 +1,27 @@
 [
     {
         "file_dir": "./data/cv_1.pdf",
-        "question": "What is the candidate's name and email address?"
+        "question": "What is the candidate's name and email address?",
+        "ground_truth": "The candidate is John Smith, and his email address is john.smith@example.com."
     },
     {
         "file_dir": "./data/cv_2.pdf",
-        "question": "What programming languages does this person know?"
+        "question": "What programming languages does this person know?",
+        "ground_truth": "Jane Doe knows JavaScript and Python, and also works with HTML and CSS (plus frameworks such as React, Node.js and Bootstrap)."
     },
     {
         "file_dir": "./data/cv_3.pdf",
-        "question": "What is the candidate's work experience?"
+        "question": "What is the candidate's work experience?",
+        "ground_truth": "Emily Davis has been a UX/UI Designer at Creative Minds Studio in Los Angeles since May 2017, designing web and mobile interfaces and running user research and usability testing. Before that she was a Graphic Designer at Visual Impact Design, Los Angeles, from June 2014 to April 2017, creating marketing assets, brand guidelines and a website redesign that raised engagement 25%."
     },
     {
         "file_dir": "./data/cv_4.pdf",
-        "question": "What are the candidate's key skills and qualifications?"
+        "question": "What are the candidate's key skills and qualifications?",
+        "ground_truth": "Michael Brown is a full-stack developer with over 6 years of experience. Skills: React, Angular, Vue.js, Node.js, Express.js, SQL, MongoDB, Docker, Kubernetes, AWS and Azure. He holds a BS in Information Technology from the University of Illinois and is a Certified Scrum Master (2021) and AWS Certified Developer - Associate (2020)."
     },
     {
         "file_dir": "./data/cv_5.pdf",
-        "question": "What is the candidate's educational background?"
+        "question": "What is the candidate's educational background?",
+        "ground_truth": "Sarah Johnson has a Bachelor of Arts in Communications from the University of Texas, Austin, TX, graduated May 2016."
     }
 ]
